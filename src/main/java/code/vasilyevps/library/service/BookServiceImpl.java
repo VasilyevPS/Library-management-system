@@ -4,12 +4,12 @@ import code.vasilyevps.library.entity.book.Book;
 import code.vasilyevps.library.entity.book.dto.BookCreateDto;
 import code.vasilyevps.library.entity.book.dto.BookDto;
 import code.vasilyevps.library.entity.book.dto.BookUpdateDto;
+import code.vasilyevps.library.exception.ResourceNotFoundException;
 import code.vasilyevps.library.repository.BookRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
@@ -22,6 +22,7 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<BookDto> getAllBooks() {
         List<Book> books = bookRepository.findAll();
         return books.stream()
@@ -30,6 +31,7 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Optional<BookDto> getBook(long id) {
         return bookRepository.findById(id)
                 .map(this::convertEntityToDto);
@@ -50,7 +52,7 @@ public class BookServiceImpl implements BookService {
     @Transactional
     public void updateBook(long id, BookUpdateDto dto) {
         Book existingBook = bookRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("Книга с ID " + id + " не найдена"));
+                .orElseThrow(() -> new ResourceNotFoundException("Книга с ID " + id + " не найдена"));
 
         if (!existingBook.getIsbn().equals(dto.isbn()) && bookRepository.existsByIsbn(dto.isbn())) {
             throw new IllegalArgumentException("Книга с таким ISBN уже зарегистрирована");
@@ -63,7 +65,7 @@ public class BookServiceImpl implements BookService {
     @Transactional
     public void deleteBook(long id) {
         if (!bookRepository.existsById(id)) {
-            throw new NoSuchElementException("Книга с ID " + id + " не найдена");
+            throw new ResourceNotFoundException("Книга с ID " + id + " не найдена");
         }
         bookRepository.deleteById(id);
     }

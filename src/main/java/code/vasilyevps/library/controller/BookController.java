@@ -3,6 +3,7 @@ package code.vasilyevps.library.controller;
 import code.vasilyevps.library.entity.book.dto.BookCreateDto;
 import code.vasilyevps.library.entity.book.dto.BookDto;
 import code.vasilyevps.library.entity.book.dto.BookUpdateDto;
+import code.vasilyevps.library.exception.ResourceNotFoundException;
 import code.vasilyevps.library.service.BookService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -17,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 
 @RestController
 @RequestMapping("api/books")
@@ -37,7 +37,7 @@ public class BookController {
     @GetMapping("/{id}")
     public BookDto getBook(@PathVariable("id") long id) {
         return bookService.getBook(id)
-                .orElseThrow(() -> new NoSuchElementException("Книга с ID " + id + " не найдена"));
+                .orElseThrow(() -> new ResourceNotFoundException("Книга с ID " + id + " не найдена"));
     }
 
     @PostMapping

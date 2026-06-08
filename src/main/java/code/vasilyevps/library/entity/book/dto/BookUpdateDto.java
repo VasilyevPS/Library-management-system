@@ -14,7 +14,7 @@ public record BookUpdateDto(
         String author,
 
         @NotBlank(message = "ISBN не должен быть пустым")
-        @ISBN(type = ISBN.Type.ANY, message = "Неверный формат ISBN (должен быть 10 или 13 цифр)")
+        @ISBN(type = ISBN.Type.ANY, message = "Введенный ISBN не существует. Проверьте правильность цифр")
         String isbn,
 
         @NotNull(message = "Год публикации обязателен")
