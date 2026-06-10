@@ -1,11 +1,14 @@
 package code.vasilyevps.library.service;
 
 import code.vasilyevps.library.entity.book.Book;
+import code.vasilyevps.library.entity.book.BookSpecs;
 import code.vasilyevps.library.entity.book.dto.BookCreateDto;
 import code.vasilyevps.library.entity.book.dto.BookDto;
+import code.vasilyevps.library.entity.book.dto.BookSearchFilter;
 import code.vasilyevps.library.entity.book.dto.BookUpdateDto;
 import code.vasilyevps.library.exception.ResourceNotFoundException;
 import code.vasilyevps.library.repository.BookRepository;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -68,6 +71,21 @@ public class BookServiceImpl implements BookService {
             throw new ResourceNotFoundException("Книга с ID " + id + " не найдена");
         }
         bookRepository.deleteById(id);
+    }
+
+    @Override
+    public List<BookDto> search(BookSearchFilter filter) {
+        Specification<Book> spec = Specification.where(BookSpecs.hasTitle(filter.getTitle()))
+                .and(BookSpecs.hasAuthor(filter.getAuthor()))
+                .and(BookSpecs.hasIsbn(filter.getIsbn()))
+                .and(BookSpecs.hasPublicationYear(filter.getPublicationYear()))
+                .and(BookSpecs.hasTotalCopies(filter.getTotalCopies()))
+                .and(BookSpecs.hasAvailableCopies(filter.getAvailableCopies()));
+
+        List<Book> filteredBooks = bookRepository.findAll(spec);
+        return filteredBooks.stream()
+                .map(this::convertEntityToDto)
+                .toList();
     }
 
     private BookDto convertEntityToDto(Book book) {

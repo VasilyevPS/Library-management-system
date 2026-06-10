@@ -2,6 +2,7 @@ package code.vasilyevps.library.controller;
 
 import code.vasilyevps.library.entity.book.dto.BookCreateDto;
 import code.vasilyevps.library.entity.book.dto.BookDto;
+import code.vasilyevps.library.entity.book.dto.BookSearchFilter;
 import code.vasilyevps.library.entity.book.dto.BookUpdateDto;
 import code.vasilyevps.library.exception.ResourceNotFoundException;
 import code.vasilyevps.library.service.BookService;
@@ -57,6 +58,11 @@ public class BookController {
     public ResponseEntity<Void> deleteBook(@PathVariable("id") long id) {
         bookService.deleteBook(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("search")
+    public List<BookDto> search(BookSearchFilter filter) {
+        return bookService.search(filter);
     }
 
 }

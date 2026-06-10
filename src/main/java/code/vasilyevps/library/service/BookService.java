@@ -2,6 +2,7 @@ package code.vasilyevps.library.service;
 
 import code.vasilyevps.library.entity.book.dto.BookCreateDto;
 import code.vasilyevps.library.entity.book.dto.BookDto;
+import code.vasilyevps.library.entity.book.dto.BookSearchFilter;
 import code.vasilyevps.library.entity.book.dto.BookUpdateDto;
 import jakarta.validation.Valid;
 
@@ -19,4 +20,6 @@ public interface BookService {
     void updateBook(long id, @Valid BookUpdateDto bookUpdateDto);
 
     void deleteBook(long id);
+
+    List<BookDto> search(BookSearchFilter filter);
 }
