@@ -7,6 +7,7 @@ import code.vasilyevps.library.entity.book.dto.BookDto;
 import code.vasilyevps.library.entity.book.dto.BookSearchFilter;
 import code.vasilyevps.library.entity.book.dto.BookUpdateDto;
 import code.vasilyevps.library.exception.ResourceNotFoundException;
+import code.vasilyevps.library.mapper.BookMapper;
 import code.vasilyevps.library.repository.BookRepository;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -19,9 +20,11 @@ import java.util.Optional;
 public class BookServiceImpl implements BookService {
 
     private final BookRepository bookRepository;
+    private final BookMapper bookMapper;
 
-    public BookServiceImpl(BookRepository bookRepository) {
+    public BookServiceImpl(BookRepository bookRepository, BookMapper bookMapper) {
         this.bookRepository = bookRepository;
+        this.bookMapper = bookMapper;
     }
 
     @Override
@@ -29,7 +32,7 @@ public class BookServiceImpl implements BookService {
     public List<BookDto> getAllBooks() {
         List<Book> books = bookRepository.findAll();
         return books.stream()
-                .map(this::convertEntityToDto)
+                .map(bookMapper::toDto)
                 .toList();
     }
 
@@ -37,7 +40,7 @@ public class BookServiceImpl implements BookService {
     @Transactional(readOnly = true)
     public Optional<BookDto> getBook(long id) {
         return bookRepository.findById(id)
-                .map(this::convertEntityToDto);
+                .map(bookMapper::toDto);
     }
 
     @Override
@@ -46,9 +49,9 @@ public class BookServiceImpl implements BookService {
         if (bookRepository.existsByIsbn(dto.isbn())) {
             throw new IllegalArgumentException("Книга с таким ISBN уже зарегистрирована");
         }
-        Book newBook = convertCreateDtoToEntity(dto);
+        Book newBook = bookMapper.toEntity(dto);
         Book savedBook = bookRepository.save(newBook);
-        return convertEntityToDto(savedBook);
+        return bookMapper.toDto(savedBook);
     }
 
     @Override
@@ -61,7 +64,7 @@ public class BookServiceImpl implements BookService {
             throw new IllegalArgumentException("Книга с таким ISBN уже зарегистрирована");
         }
 
-        updateEntity(existingBook, dto);
+        bookMapper.updateEntityFromDto(dto, existingBook);
     }
 
     @Override
@@ -74,6 +77,7 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<BookDto> search(BookSearchFilter filter) {
         Specification<Book> spec = Specification.where(BookSpecs.hasTitle(filter.getTitle()))
                 .and(BookSpecs.hasAuthor(filter.getAuthor()))
@@ -84,40 +88,8 @@ public class BookServiceImpl implements BookService {
 
         List<Book> filteredBooks = bookRepository.findAll(spec);
         return filteredBooks.stream()
-                .map(this::convertEntityToDto)
+                .map(bookMapper::toDto)
                 .toList();
     }
 
-    private BookDto convertEntityToDto(Book book) {
-        return new BookDto(
-                book.getId(),
-                book.getTitle(),
-                book.getAuthor(),
-                book.getIsbn(),
-                book.getPublicationYear(),
-                book.getTotalCopies(),
-                book.getAvailableCopies()
-        );
-    }
-
-    private Book convertCreateDtoToEntity(BookCreateDto dto) {
-        return new Book(
-                null,
-                dto.title(),
-                dto.author(),
-                dto.isbn(),
-                dto.publicationYear(),
-                dto.totalCopies(),
-                dto.availableCopies()
-        );
-    }
-
-    private void updateEntity(Book book, BookUpdateDto dto) {
-        book.setTitle(dto.title());
-        book.setAuthor(dto.author());
-        book.setIsbn(dto.isbn());
-        book.setPublicationYear(dto.publicationYear());
-        book.setTotalCopies(dto.totalCopies());
-        book.setAvailableCopies(dto.availableCopies());
-    }
 }
