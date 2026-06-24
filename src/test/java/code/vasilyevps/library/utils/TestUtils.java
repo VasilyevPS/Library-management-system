@@ -1,8 +1,10 @@
 package code.vasilyevps.library.utils;
 
 import code.vasilyevps.library.entity.book.dto.BookCreateDto;
+import code.vasilyevps.library.entity.loan.dto.LoanCreateDto;
 import code.vasilyevps.library.entity.reader.dto.ReaderCreateDto;
 import code.vasilyevps.library.repository.BookRepository;
+import code.vasilyevps.library.repository.LoanRepository;
 import code.vasilyevps.library.repository.ReaderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -20,6 +22,10 @@ public class TestUtils {
     public static final String BOOK_CONTROLLER_URL = "/api/books";
     public static final String SEARCH = "/search";
     public static final String READER_CONTROLLER_URL = "/api/readers";
+    public static final String LOAN_CONTROLLER_URL = "/api/loans";
+    public static final String LOAN_RETURN = "/{id}/return";
+    public static final String LOAN_READER = "/reader/{readerId}";
+    public static final String OVERDUE = "/overdue";
 
     private final BookCreateDto testBookDto = new BookCreateDto(
             "Чистый код",
@@ -49,7 +55,11 @@ public class TestUtils {
     @Autowired
     private ReaderRepository readerRepository;
 
+    @Autowired
+    private LoanRepository loanRepository;
+
     public void clearDB() {
+        loanRepository.deleteAll();
         bookRepository.deleteAll();
         readerRepository.deleteAll();
     }
@@ -71,6 +81,12 @@ public class TestUtils {
     public ResultActions addReader(ReaderCreateDto readerCreateDto) throws Exception {
         return perform(post(READER_CONTROLLER_URL)
                 .content(objectMapper.writeValueAsString(readerCreateDto))
+                .contentType(MediaType.APPLICATION_JSON));
+    }
+
+    public ResultActions addLoan(LoanCreateDto loanCreateDto) throws Exception {
+        return perform(post(LOAN_CONTROLLER_URL)
+                .content(objectMapper.writeValueAsString(loanCreateDto))
                 .contentType(MediaType.APPLICATION_JSON));
     }
 
