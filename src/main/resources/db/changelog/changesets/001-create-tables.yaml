@@ -1,0 +1,147 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: Pavel Vasilyev
+      preConditions:
+        - onFail: MARK_RAN
+          not:
+            tableExists:
+              tableName: books
+      changes:
+        - createTable:
+            tableName: books
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: title
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: author
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: isbn
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: publication_year
+                  type: INTEGER
+                  constraints:
+                    nullable: false
+              - column:
+                  name: total_copies
+                  type: INTEGER
+                  constraints:
+                    nullable: false
+              - column:
+                  name: available_copies
+                  type: INTEGER
+                  constraints:
+                    nullable: false
+  - changeSet:
+      id: 2
+      author: Pavel Vasilyev
+      preConditions:
+        - onFail: MARK_RAN
+          not:
+            tableExists:
+              tableName: readers
+      changes:
+        - createTable:
+            tableName: readers
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: first_name
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: last_name
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: email
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: phone
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: registration_date
+                  type: DATE
+                  constraints:
+                    nullable: false
+  - changeSet:
+      id: 3
+      author: Pavel Vasilyev
+      preConditions:
+        - onFail: MARK_RAN
+          not:
+            tableExists:
+              tableName: loans
+      changes:
+        - createTable:
+            tableName: loans
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: book_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_loans_book
+                    referencedTableName: books
+                    referencedColumnNames: id
+              - column:
+                  name: reader_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_loans_reader
+                    referencedTableName: readers
+                    referencedColumnNames: id
+              - column:
+                  name: loan_date
+                  type: DATE
+                  constraints:
+                    nullable: false
+              - column:
+                  name: due_date
+                  type: DATE
+                  constraints:
+                    nullable: false
+              - column:
+                  name: return_date
+                  type: DATE
+              - column:
+                  name: status
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
