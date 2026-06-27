@@ -6,6 +6,7 @@ import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -13,6 +14,7 @@ import java.time.LocalDate;
 import java.util.Objects;
 
 @Entity
+@Table(name = "readers")
 @EntityListeners(AuditingEntityListener.class)
 public class Reader {
 
@@ -37,16 +39,6 @@ public class Reader {
     private LocalDate registrationDate;
 
     public Reader() {
-    }
-
-    public Reader(Long id, String firstName, String lastName,
-                  String email, String phone, LocalDate registrationDate) {
-        this.id = id;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.email = email;
-        this.phone = phone;
-        this.registrationDate = registrationDate;
     }
 
     public Long getId() {

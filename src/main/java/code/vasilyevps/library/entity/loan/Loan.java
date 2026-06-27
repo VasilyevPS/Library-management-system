@@ -12,11 +12,13 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 
 import java.time.LocalDate;
 import java.util.Objects;
 
 @Entity
+@Table(name = "loans")
 public class Loan {
 
     @Id
@@ -40,7 +42,7 @@ public class Loan {
     private LocalDate returnDate;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "status", nullable = false)
+    @Column(nullable = false)
     private LoanStatus status;
 
     public Loan() {
