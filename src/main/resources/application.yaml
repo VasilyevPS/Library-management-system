@@ -2,7 +2,7 @@ spring:
   application:
     name: library
   profiles:
-    active: prod
+    active: dev
 
   liquibase:
     enabled: true

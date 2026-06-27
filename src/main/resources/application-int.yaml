@@ -1,0 +1,25 @@
+spring:
+  datasource:
+    username: ${POSTGRES_USER:postgres}
+    password: ${POSTGRES_PASSWORD:postgres}
+    url: jdbc:postgresql://${POSTGRES_HOST:localhost}:5432/${POSTGRES_DB_NAME:library}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      pool-name: LibraryIntHikariPool
+      maximum-pool-size: 5
+      minimum-idle: 2
+      connection-timeout: 3000
+      idle-timeout: 60000
+      max-lifetime: 600000
+      leak-detection-threshold: 2000
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        jdbc.fetch_size: 50
+        jdbc.batch_size: 30
+        order_inserts: true
+        order_updates: true
